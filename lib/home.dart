@@ -15,10 +15,17 @@ class HomeScreen extends StatelessWidget {
         gridDelegate:
             SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
         itemBuilder: (context, index) {
-          return Note(
-            content: 'fake people are always fake',
-            id: index.toString(),
-            title: 'fake title',
+          return GestureDetector(
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+                return AddNoteScreen(type: ActionType.editNote);
+              }));
+            },
+            child: Note(
+              content: 'fake people are always fake',
+              id: index.toString(),
+              title: 'fake title',
+            ),
           );
         },
         itemCount: 4,

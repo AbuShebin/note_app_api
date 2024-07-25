@@ -12,6 +12,7 @@ class AddNoteScreen extends StatelessWidget {
   String? id;
   final _titleController=TextEditingController();
   final _contentController=TextEditingController();
+  final _scaffoldKey=GlobalKey<ScaffoldState>();
 
   NoteDb noteDb=NoteDb();
 
@@ -29,7 +30,14 @@ class AddNoteScreen extends StatelessWidget {
 
     print("${_newNote} from add Note Page");
 
-  noteDb.createNote(_newNote);
+ final newNote=await noteDb.createNote(_newNote);
+ if(_newNote!=null){
+   print("Note saved");
+   Navigator.of(_scaffoldKey.currentContext!).pop();
+ }else{
+
+   print("error while saving note");
+ }
   }
 
   Widget get saveButton => TextButton.icon(
@@ -50,7 +58,9 @@ class AddNoteScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
+      key: _scaffoldKey,
         appBar: AppBar(
           title: Text("Add note Page"),
           actions: [

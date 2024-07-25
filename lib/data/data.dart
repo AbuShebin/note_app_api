@@ -16,25 +16,31 @@ class NoteDb extends Apicalls {
   final Dio dio = Dio();
   final Url url = Url();
 
+  NoteDb(){
+    dio.options=BaseOptions(
+      baseUrl: url.baseUrl,
+      responseType: ResponseType.plain
+    );
+  }
+
  @override
 Future<NoteModel?> createNote(NoteModel value) async {
   try {
+
     print("$value from data.dart");
-    final _result = await dio.post(url.baseUrl + url.addNote, data: value.toJson());
+    final _result = await dio.post( url.addNote,
+        data: value.toJson());
+
     var _resultAsJson=jsonDecode(_result.data);
     return NoteModel.fromJson(_resultAsJson);
 
   } on DioException catch (e) {
-    if (e.response != null) {
-      // The server responded with a non-200 status code.
-      print('DioError response: ${e.response}');
-      print('DioError response data: ${e.response?.data}');
-    } else {
-      // Something else went wrong.
-      print('DioError: $e');
-    }
+    print(e.response?.data);
+    print(e);
+    return null;
   } catch (e) {
     print(e.toString());
+    return null;
   }
 }
 
@@ -47,11 +53,21 @@ Future<NoteModel?> createNote(NoteModel value) async {
 
   @override
   Future<List<NoteModel>> getAllNote() async {
-    final _result =await dio.get<GetAllNotesResp>(url.baseUrl + url.getAllNote);
-    if(_result.data==null){
-      return [];
+    final _result =await dio.get(url.baseUrl + url.getAllNote);
+
+
+    if(_result.data!=null){
+      final _resultAsJson= jsonDecode(_result.data);
+      final getNoteResp=GetAllNotesResp.fromJson(_resultAsJson);
+      print("getNoteResp=5======================");
+      print(getNoteResp);
+      print("getNoteResp=5======================");
+      return getNoteResp.data;
     }else{
-    return _result.data!.data;
+      print('result.data================');
+      print(_result.data);
+      print('result.data================');
+    return _result.data;
   }}
 
   @override
